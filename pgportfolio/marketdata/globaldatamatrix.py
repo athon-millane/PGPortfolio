@@ -15,7 +15,8 @@ import logging
 class HistoryManager:
     # if offline ,the coin_list could be None
     # NOTE: return of the sqlite results is a list of tuples, each tuple is a row
-    def __init__(self, coin_number, end, volume_average_days=1, volume_forward=0, online=True):
+    def __init__(self, coin_number, end, volume_average_days=1, volume_forward=0, online=True, database_dir=None):
+        self.database_dir = database_dir if database_dir else DATABASE_DIR
         self.initialize_db()
         self.__storage_period = FIVE_MINUTES  # keep this as 300
         self._coin_number = coin_number
@@ -31,7 +32,7 @@ class HistoryManager:
         return self.__coins
 
     def initialize_db(self):
-        with sqlite3.connect(DATABASE_DIR) as connection:
+        with sqlite3.connect(self.database_dir) as connection:
             cursor = connection.cursor()
             cursor.execute('CREATE TABLE IF NOT EXISTS History (date INTEGER,'
                            ' coin varchar(20), high FLOAT, low FLOAT,'
@@ -74,7 +75,7 @@ class HistoryManager:
         time_index = pd.to_datetime(list(range(start, end+1, period)),unit='s')
         panel = pd.Panel(items=features, major_axis=coins, minor_axis=time_index, dtype=np.float32)
 
-        connection = sqlite3.connect(DATABASE_DIR)
+        connection = sqlite3.connect(self.database_dir)
         try:
             for row_number, coin in enumerate(coins):
                 for feature in features:
@@ -129,7 +130,7 @@ class HistoryManager:
         if not self._online:
             logging.info("select coins offline from %s to %s" % (datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M'),
                                                                     datetime.fromtimestamp(end).strftime('%Y-%m-%d %H:%M')))
-            connection = sqlite3.connect(DATABASE_DIR)
+            connection = sqlite3.connect(self.database_dir)
             try:
                 cursor=connection.cursor()
                 cursor.execute('SELECT coin,SUM(volume) AS total_volume FROM History WHERE'
@@ -169,7 +170,7 @@ class HistoryManager:
 
     # add new history data into the database
     def update_data(self, start, end, coin):
-        connection = sqlite3.connect(DATABASE_DIR)
+        connection = sqlite3.connect(self.database_dir)
         try:
             cursor = connection.cursor()
             min_date = cursor.execute('SELECT MIN(date) FROM History WHERE coin=?;', (coin,)).fetchall()[0][0]
