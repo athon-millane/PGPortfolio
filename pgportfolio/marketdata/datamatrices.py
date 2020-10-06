@@ -15,7 +15,7 @@ MIN_NUM_PERIOD = 3
 class DataMatrices:
     def __init__(self, start, end, period, batch_size=50, volume_average_days=30, buffer_bias_ratio=0,
                  market="poloniex", coin_filter=1, window_size=50, feature_number=3, test_portion=0.15,
-                 portion_reversed=False, online=False, is_permed=False, database_dir=None:
+                 portion_reversed=False, online=False, is_permed=False, database_dir=None):
         """
         :param start: Unix time
         :param end: Unix time
