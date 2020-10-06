@@ -103,7 +103,3 @@ ENV/
 # database
 database/
 train_package/
-
-.DS_Store
-.idea/
-*.db
