@@ -46,7 +46,7 @@ class HistoryManager:
         """
         return self.get_global_panel(start, end, period, features).values
 
-    def get_global_panel(self, start, end, period=300, features=('close',)):
+    def get_global_panel(self, start, end, period=300, features=('close',), coin_list=None):
         """
         :param start/end: linux timestamp in seconds
         :param period: time interval of each data access point
@@ -55,8 +55,11 @@ class HistoryManager:
         """
         start = int(start - (start%period))
         end = int(end - (end%period))
-        coins = self.select_coins(start=end - self.__volume_forward - self.__volume_average_days * DAY,
-                                  end=end-self.__volume_forward)
+        if coin_list:
+            coins = coin_list
+        else:
+            coins = self.select_coins(start=end - self.__volume_forward - self.__volume_average_days * DAY,
+                                    end=end-self.__volume_forward)
         self.__coins = coins
         for coin in coins:
             self.update_data(start, end, coin)

@@ -29,7 +29,7 @@ Result = collections.namedtuple("Result",
 
 class TraderTrainer:
     def __init__(self, config, fake_data=False, restore_dir=None, save_path=None, device="cpu",
-                 agent=None):
+                 agent=None, data_matrices=None):
         """
         :param config: config dictionary
         :param fake_data: if True will use data generated randomly
@@ -52,7 +52,9 @@ class TraderTrainer:
         self.__snap_shot = self.train_config["snap_shot"]
         config["input"]["fake_data"] = fake_data
 
-        self._matrix = DataMatrices.create_from_config(config)
+        if not data_matrices:
+            data_matrices = DataMatrices.create_from_config(config)
+        self._matrix = data_matrices
 
         self.test_set = self._matrix.get_test_set()
         if not config["training"]["fast_train"]:

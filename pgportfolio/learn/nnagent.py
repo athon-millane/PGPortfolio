@@ -41,8 +41,10 @@ class NNAgent:
                                                  training_method=self.__config["training"]["training_method"])
         self.__saver = tf.train.Saver()
         if restore_dir:
+            print(f"Restoring agent from {restore_dir}.")
             self.__saver.restore(self.__net.session, restore_dir)
         else:
+            print(f"Creating new agent.")
             self.__net.session.run(tf.global_variables_initializer())
 
     @property
