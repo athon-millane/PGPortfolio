@@ -15,7 +15,7 @@ MIN_NUM_PERIOD = 3
 class DataMatrices:
     def __init__(self, start, end, period, batch_size=50, volume_average_days=30, buffer_bias_ratio=0,
                  market="poloniex", coin_filter=1, window_size=50, feature_number=3, test_portion=0.15,
-                 portion_reversed=False, online=False, is_permed=False):
+                 portion_reversed=False, online=False, is_permed=False, database_dir=None:
         """
         :param start: Unix time
         :param end: Unix time
@@ -43,7 +43,8 @@ class DataMatrices:
         volume_forward = get_volume_forward(self.__end-start, test_portion, portion_reversed)
         self.__history_manager = gdm.HistoryManager(coin_number=coin_filter, end=self.__end,
                                                     volume_average_days=volume_average_days,
-                                                    volume_forward=volume_forward, online=online)
+                                                    volume_forward=volume_forward, online=online,
+                                                    database_dir=database_dir)
         if market == "poloniex":
             self.__global_data = self.__history_manager.get_global_panel(start,
                                                                          self.__end,
@@ -108,6 +109,7 @@ class DataMatrices:
                             volume_average_days=input_config["volume_average_days"],
                             test_portion=input_config["test_portion"],
                             portion_reversed=input_config["portion_reversed"],
+                            database_dir=input_config["database_dir"],
                             )
 
     @property

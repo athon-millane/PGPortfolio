@@ -31,7 +31,7 @@ def get_coin_name_list(config, online):
     coins = HistoryManager(input_config["coin_number"], end,
                            volume_forward=volume_forward,
                            volume_average_days=input_config["volume_average_days"],
-                           online=online).\
+                           online=online, database_dir=input_config["database_dir"]).\
         select_coins(start, end)
     return coins
 
